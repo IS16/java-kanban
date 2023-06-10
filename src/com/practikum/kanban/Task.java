@@ -1,2 +1,54 @@
-package com.practikum.kanban;public class Task {
+package com.practikum.kanban;
+
+public class Task {
+    private final int id;
+    private String title;
+    private String description = "";
+    private String status = "NEW";
+
+    public Task(int id, String title, String status) {
+        this.id = id;
+        this.title = title;
+        this.status = status;
+    }
+
+    public Task(int id, String title, String description, String status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    protected void setTitle(String title) {
+        this.title = title;
+    }
+
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
+    protected void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Task(Id = " + this.id + ", Title=\"" + this.title + "\", Description=\"" + this.description + "\", Status=\"" + this.status + "\")";
+    }
 }
