@@ -84,7 +84,7 @@ public class Main {
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка обновления эпика");
-        Epic epic3 = new Epic(3, "Первый эпик (Upd)");
+        Epic epic3 = new Epic(3, "Первый эпик (Upd)", "Тест", epic1.getSubtasks());
         System.out.println(taskManager.getEpicById(3));
         taskManager.updateEpic(epic3);
         System.out.println(taskManager.getEpicById(3));
@@ -148,7 +148,7 @@ public class Main {
         System.out.println("--------------------------------------------------------------");
         System.out.println();
 
-        Subtask subtask4 = new Subtask(5, "Третья подзадача (Upd)", "IN_PROGRESS");
+        Subtask subtask4 = new Subtask(subtask3.getId(), subtask3.getEpicId(),"Третья подзадача (Upd)", "IN_PROGRESS");
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка обновления подзадачи");
@@ -203,11 +203,8 @@ public class Main {
         System.out.println("--------------------------------------------------------------");
         System.out.println();
 
-        ArrayList<Subtask> subtasks = new ArrayList<>();
         Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "NEW");
         Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", "NEW");
-        subtasks.add(subtask1);
-        subtasks.add(subtask2);
         Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", new ArrayList<>());
         taskManager.addEpic(epic);
 

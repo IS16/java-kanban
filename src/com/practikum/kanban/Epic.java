@@ -42,6 +42,10 @@ public class Epic extends Task {
         updateStatus();
     }
 
+    public boolean hasSubtask(int subtaskId) {
+        return subtasks.containsKey(subtaskId);
+    }
+
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
         updateStatus();
