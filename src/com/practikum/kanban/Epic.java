@@ -6,8 +6,13 @@ import java.util.HashMap;
 public class Epic extends Task {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
+    public Epic(int id, String title) {
+        super(id, title);
+        updateStatus();
+    }
+
     public Epic(int id, String title, ArrayList<Subtask> subtasks) {
-        super(id, title, "NEW");
+        super(id, title);
 
         for (Subtask item : subtasks) {
             item.setEpicId(this.getId());
@@ -18,7 +23,7 @@ public class Epic extends Task {
     }
 
     public Epic(int id, String title, String description, ArrayList<Subtask> subtasks) {
-        super(id, title, description, "NEW");
+        super(id, title, description);
 
         for (Subtask item : subtasks) {
             item.setEpicId(this.getId());
@@ -29,13 +34,7 @@ public class Epic extends Task {
     }
 
     public ArrayList<Subtask> getSubtasks() {
-        ArrayList<Subtask> out = new ArrayList<>();
-
-        for (int subtaskId : subtasks.keySet()) {
-            out.add(subtasks.get(subtaskId));
-        }
-
-        return out;
+        return new ArrayList<>(subtasks.values());
     }
 
     public void addSubtask(Subtask subtask) {
@@ -86,11 +85,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
-
-        for (Integer id : subtasks.keySet()) {
-            subtaskArrayList.add(subtasks.get(id));
-        }
+        ArrayList<Subtask> subtaskArrayList = new ArrayList<>(subtasks.values());
 
         return "Epic(Id="+ super.getId() + ", Title=\"" + super.getTitle() + "\", Description=\"" + super.getDescription() + "\", Status=\"" + super.getStatus() + "\", Subtasks=" + subtaskArrayList + ")";
     }

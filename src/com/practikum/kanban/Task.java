@@ -6,10 +6,15 @@ public class Task {
     private String description = "";
     private String status = "NEW";
 
-    public Task(int id, String title, String status) {
+    public Task(int id, String title) {
         this.id = id;
         this.title = title;
-        this.status = status;
+    }
+
+    public Task(int id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
     }
 
     public Task(int id, String title, String description, String status) {

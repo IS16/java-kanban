@@ -2,6 +2,7 @@ package com.practikum.kanban;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TaskManager {
     private int curId = 0;
@@ -18,21 +19,11 @@ public class TaskManager {
     }
 
     public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> out = new ArrayList<>();
-
-        for (int taskId : tasks.keySet()) {
-            out.add(tasks.get(taskId));
-        }
-
-        return out;
+        return new ArrayList<>(tasks.values());
     }
 
     public Task getTaskById(int taskId) {
-        if (tasks.containsKey(taskId)) {
-            return tasks.get(taskId);
-        }
-
-        return null;
+        return tasks.getOrDefault(taskId, null);
     }
 
     public void updateTask(Task task) {
@@ -56,37 +47,21 @@ public class TaskManager {
     }
 
     public ArrayList<Epic> getAllEpics() {
-        ArrayList<Epic> out = new ArrayList<>();
-
-        for (int epicId : epics.keySet()) {
-            out.add(epics.get(epicId));
-        }
-
-        return out;
+        return new ArrayList<>(epics.values());
     }
 
     public Epic getEpicById(int epicId) {
-        if (epics.containsKey(epicId)) {
-            return epics.get(epicId);
-        }
-
-        return null;
+        return epics.getOrDefault(epicId, null);
     }
 
     public void updateEpic(Epic epic) {
-        Object[] ids = subtasks.keySet().toArray();
-
-        for (Object id : ids) {
-            Subtask subtask = subtasks.get((int) id);
-            if (subtask.getEpicId() == epic.getId()) {
-                subtasks.remove((int) id);
-            }
+        if  (!epics.containsKey(epic.getId())) {
+            return;
         }
 
-        epics.put(epic.getId(), epic);
-        for (Subtask subtask : epic.getSubtasks()) {
-            subtasks.put(subtask.getId(), subtask);
-        }
+        Epic oldEpic = epics.get(epic.getId());
+        Epic newEpic = new Epic(epic.getId(), epic.getTitle(), oldEpic.getSubtasks());
+        epics.put(epic.getId(), newEpic);
     }
 
     public void deleteEpicById(int epicId) {
@@ -94,15 +69,7 @@ public class TaskManager {
             return;
         }
 
-        Object[] ids = subtasks.keySet().toArray();
-
-        for (Object id : ids) {
-            Subtask subtask = subtasks.get((int) id);
-            if (subtask.getEpicId() == epicId) {
-                subtasks.remove((int) id);
-            }
-        }
-
+        deleteAllSubtasksByEpicId(epicId);
         epics.remove(epicId);
     }
 
@@ -122,29 +89,15 @@ public class TaskManager {
     }
 
     public ArrayList<Subtask> getAllSubtasks() {
-        ArrayList<Subtask> out = new ArrayList<>();
-
-        for (int subtaskId : subtasks.keySet()) {
-            out.add(subtasks.get(subtaskId));
-        }
-
-        return out;
+        return new ArrayList<>(subtasks.values());
     }
 
     public ArrayList<Subtask> getAllSubtasksByEpicId(int epicId) {
-        if (!epics.containsKey(epicId)) {
-            return new ArrayList<>();
-        }
-
-        return epics.get(epicId).getSubtasks();
+        return !epics.containsKey(epicId) ? new ArrayList<>() : epics.get(epicId).getSubtasks();
     }
 
     public Subtask getSubtaskById(int subtaskId) {
-        if (!subtasks.containsKey(subtaskId)) {
-            return null;
-        }
-
-        return subtasks.get(subtaskId);
+        return subtasks.getOrDefault(subtaskId, null);
     }
 
     public void updateSubtask(Subtask subtask) {
@@ -180,11 +133,12 @@ public class TaskManager {
     }
 
     public void deleteAllSubtasks() {
-        Object[] ids = subtasks.keySet().toArray();
-        for (Object id : ids) {
-            Subtask subtask = subtasks.get((int) id);
-            epics.get(subtask.getEpicId()).deleteSubtaskById((int) id);
-            subtasks.remove((int) id);
+        Iterator<Integer> iter = subtasks.keySet().iterator();
+        while (iter.hasNext()) {
+            Integer subtaskId = iter.next();
+            Subtask subtask = subtasks.get(subtaskId);
+            epics.get(subtask.getEpicId()).deleteSubtaskById(subtaskId);
+            iter.remove();
         }
     }
 }

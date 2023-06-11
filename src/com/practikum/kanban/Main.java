@@ -1,4 +1,4 @@
-import com.practikum.kanban.*;
+package com.practikum.kanban;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ public class Main {
 
     static void testTask(TaskManager taskManager) {
         Task task1 = new Task(taskManager.getCurId(),"Первая", "Моя первая задача", "NEW");
-        Task task2 = new Task(taskManager.getCurId(), "Вторая", "NEW");
+        Task task2 = new Task(taskManager.getCurId(), "Вторая", "", "NEW");
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка добавления задач и вывода всех существующих");
@@ -84,10 +84,7 @@ public class Main {
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка обновления эпика");
-        ArrayList<Subtask> subtasks1 = epic1.getSubtasks();
-        subtasks1.remove(1);
-        subtasks1.add(new Subtask(taskManager.getCurId(), "Третья подзадача", "NEW"));
-        Epic epic3 = new Epic(3, "Первый эпик (Upd)", subtasks1);
+        Epic epic3 = new Epic(3, "Первый эпик (Upd)");
         System.out.println(taskManager.getEpicById(3));
         taskManager.updateEpic(epic3);
         System.out.println(taskManager.getEpicById(3));
@@ -194,8 +191,8 @@ public class Main {
     }
 
     static void testStatusUpdate(TaskManager taskManager) {
-        Task task = new Task(taskManager.getCurId(), "Задача", "NEW");
-        Task task1 = new Task(task.getId(), "Задача", "IN_PROGRESS");
+        Task task = new Task(taskManager.getCurId(), "Задача", "", "NEW");
+        Task task1 = new Task(task.getId(), "Задача", "", "IN_PROGRESS");
         taskManager.addTask(task);
 
         System.out.println("--------------------------------------------------------------");
