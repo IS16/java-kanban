@@ -1,4 +1,4 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Tasks;
 
 public class Subtask extends Task {
     private int epicId;
@@ -21,7 +21,7 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    protected void setEpicId(int epicId) {
+    public void setEpicId(int epicId) {
         this.epicId = epicId;
     }
 

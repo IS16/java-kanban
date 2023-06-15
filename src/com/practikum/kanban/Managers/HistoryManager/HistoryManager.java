@@ -1,4 +1,6 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Managers.HistoryManager;
+
+import com.practikum.kanban.Tasks.Task;
 
 import java.util.ArrayList;
 

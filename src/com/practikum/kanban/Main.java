@@ -1,15 +1,20 @@
 package com.practikum.kanban;
 
+import com.practikum.kanban.Managers.Managers;
+import com.practikum.kanban.Managers.TaskManager.TaskManager;
+import com.practikum.kanban.Tasks.*;
+
 import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-        testTask(new Managers().getDefault());
-        testEpicSubtasks(new Managers().getDefault());
-        testSubtask(new Managers().getDefault());
-        testStatusUpdate(new Managers().getDefault());
-        testHistory(new Managers().getDefault());
+        Managers managers = new Managers();
+        testTask(managers.getDefault(managers.getDefaultHistory()));
+        testEpicSubtasks(managers.getDefault(managers.getDefaultHistory()));
+        testSubtask(managers.getDefault(managers.getDefaultHistory()));
+        testStatusUpdate(managers.getDefault(managers.getDefaultHistory()));
+        testHistory(managers.getDefault(managers.getDefaultHistory()));
     }
 
     static void testTask(TaskManager taskManager) {

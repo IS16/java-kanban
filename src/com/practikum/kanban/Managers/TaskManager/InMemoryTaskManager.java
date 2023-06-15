@@ -1,4 +1,9 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Managers.TaskManager;
+
+import com.practikum.kanban.Managers.HistoryManager.HistoryManager;
+import com.practikum.kanban.Tasks.Epic;
+import com.practikum.kanban.Tasks.Subtask;
+import com.practikum.kanban.Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +15,11 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = new Managers().getDefaultHistory();
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     @Override
     public int getCurId() {
@@ -198,6 +207,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public ArrayList<Task> getHistory() {
-        return this.historyManager.getHistory();
+        return historyManager.getHistory();
     }
 }

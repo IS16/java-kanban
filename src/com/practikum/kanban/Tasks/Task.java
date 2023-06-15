@@ -1,4 +1,4 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Tasks;
 
 public class Task {
     private final int id;

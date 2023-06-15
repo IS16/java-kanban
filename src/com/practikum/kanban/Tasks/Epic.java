@@ -1,4 +1,4 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;

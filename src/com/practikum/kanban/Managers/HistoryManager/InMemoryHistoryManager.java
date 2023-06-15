@@ -1,4 +1,6 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Managers.HistoryManager;
+
+import com.practikum.kanban.Tasks.Task;
 
 import java.util.ArrayList;
 
@@ -17,7 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public ArrayList<Task> getHistory() {
-        return history;
+        return new ArrayList<>(history);
     }
 
     @Override

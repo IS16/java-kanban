@@ -1,4 +1,8 @@
-package com.practikum.kanban;
+package com.practikum.kanban.Managers.TaskManager;
+
+import com.practikum.kanban.Tasks.Epic;
+import com.practikum.kanban.Tasks.Subtask;
+import com.practikum.kanban.Tasks.Task;
 
 import java.util.ArrayList;
 
