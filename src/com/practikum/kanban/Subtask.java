@@ -3,20 +3,20 @@ package com.practikum.kanban;
 public class Subtask extends Task {
     private int epicId;
 
-    public Subtask(int id, String title, String status) {
+    public Subtask(int id, String title, TaskStatus status) {
         super(id, title, "", status);
     }
 
-    public Subtask(int id, int epicId, String title, String status) {
+    public Subtask(int id, int epicId, String title, TaskStatus status) {
         super(id, title, "", status);
         this.epicId = epicId;
     }
 
-    public Subtask(int id, String title, String description, String status) {
+    public Subtask(int id, String title, String description, TaskStatus status) {
         super(id, title, description, status);
     }
 
-    public Subtask(int id, int epicId, String title, String description, String status) {
+    public Subtask(int id, int epicId, String title, String description, TaskStatus status) {
         super(id, title, description, status);
         this.epicId = epicId;
     }

@@ -58,34 +58,32 @@ public class Epic extends Task {
 
     private void updateStatus() {
         if (subtasks.isEmpty()) {
-            super.setStatus("NEW");
+            super.setStatus(TaskStatus.NEW);
             return;
         }
 
         int newTasksAmount = 0;
         int doneTasksAmount = 0;
 
-        for (Integer id : subtasks.keySet()) {
-            if (subtasks.get(id).getStatus().equals("NEW")) {
+        for (Integer id: subtasks.keySet()) {
+            if (subtasks.get(id).getStatus() == TaskStatus.NEW) {
                 newTasksAmount++;
-            }
-
-            if (subtasks.get(id).getStatus().equals("DONE")) {
+            } else if (subtasks.get(id).getStatus() == TaskStatus.DONE) {
                 doneTasksAmount++;
             }
         }
 
         if (newTasksAmount == subtasks.size()) {
-            super.setStatus("NEW");
+            super.setStatus(TaskStatus.NEW);
         } else if (doneTasksAmount == subtasks.size()) {
-            super.setStatus("DONE");
+            super.setStatus(TaskStatus.DONE);
         } else {
-            super.setStatus("IN_PROGRESS");
+            super.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 
     @Override
-    protected void setStatus(String status) { }
+    protected void setStatus(TaskStatus status) { }
 
     @Override
     public String toString() {

@@ -5,15 +5,16 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) {
-        testTask(new TaskManager());
-        testEpicSubtasks(new TaskManager());
-        testSubtask(new TaskManager());
-        testStatusUpdate(new TaskManager());
+        testTask(new Managers().getDefault());
+        testEpicSubtasks(new Managers().getDefault());
+        testSubtask(new Managers().getDefault());
+        testStatusUpdate(new Managers().getDefault());
+        testHistory(new Managers().getDefault());
     }
 
     static void testTask(TaskManager taskManager) {
-        Task task1 = new Task(taskManager.getCurId(),"Первая", "Моя первая задача", "NEW");
-        Task task2 = new Task(taskManager.getCurId(), "Вторая", "", "NEW");
+        Task task1 = new Task(taskManager.getCurId(),"Первая", "Моя первая задача", TaskStatus.NEW);
+        Task task2 = new Task(taskManager.getCurId(), "Вторая", "", TaskStatus.NEW);
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка добавления задач и вывода всех существующих");
@@ -32,7 +33,7 @@ public class Main {
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка обновления задачи");
-        Task task3 = new Task(1, "Первая задача (Upd)", "Обновление первой задачи", "IN_PROGRESS");
+        Task task3 = new Task(1, "Первая задача (Upd)", "Обновление первой задачи", TaskStatus.IN_PROGRESS);
         System.out.println(taskManager.getTaskById(1));
         taskManager.updateTask(task3);
         System.out.println(taskManager.getTaskById(1));
@@ -58,8 +59,8 @@ public class Main {
     }
 
     static void testEpicSubtasks(TaskManager taskManager) {
-        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "Моя самая первая подзадача", "NEW");
-        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "NEW");
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "Моя самая первая подзадача", TaskStatus.NEW);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", TaskStatus.NEW);
         ArrayList<Subtask> subtasks = new ArrayList<>();
         subtasks.add(subtask1);
         subtasks.add(subtask2);
@@ -113,8 +114,8 @@ public class Main {
         Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", new ArrayList<>());
         taskManager.addEpic(epic);
 
-        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "NEW");
-        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", "NEW");
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", TaskStatus.NEW);
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка добавления подзадач");
@@ -127,7 +128,7 @@ public class Main {
 
         Epic epic2 = new Epic(taskManager.getCurId(), "Тестовый эпик 2", new ArrayList<>());
         taskManager.addEpic(epic2);
-        Subtask subtask3 = new Subtask(taskManager.getCurId(), "Третья подзадача", "NEW");
+        Subtask subtask3 = new Subtask(taskManager.getCurId(), "Третья подзадача", TaskStatus.NEW);
         taskManager.addSubtask(epic2.getId(), subtask3);
 
         System.out.println("--------------------------------------------------------------");
@@ -148,7 +149,7 @@ public class Main {
         System.out.println("--------------------------------------------------------------");
         System.out.println();
 
-        Subtask subtask4 = new Subtask(subtask3.getId(), subtask3.getEpicId(),"Третья подзадача (Upd)", "IN_PROGRESS");
+        Subtask subtask4 = new Subtask(subtask3.getId(), subtask3.getEpicId(),"Третья подзадача (Upd)", TaskStatus.IN_PROGRESS);
 
         System.out.println("--------------------------------------------------------------");
         System.out.println("Проверка обновления подзадачи");
@@ -191,8 +192,8 @@ public class Main {
     }
 
     static void testStatusUpdate(TaskManager taskManager) {
-        Task task = new Task(taskManager.getCurId(), "Задача", "", "NEW");
-        Task task1 = new Task(task.getId(), "Задача", "", "IN_PROGRESS");
+        Task task = new Task(taskManager.getCurId(), "Задача", "", TaskStatus.NEW);
+        Task task1 = new Task(task.getId(), "Задача", "", TaskStatus.IN_PROGRESS);
         taskManager.addTask(task);
 
         System.out.println("--------------------------------------------------------------");
@@ -203,8 +204,8 @@ public class Main {
         System.out.println("--------------------------------------------------------------");
         System.out.println();
 
-        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "NEW");
-        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", "NEW");
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", TaskStatus.NEW);
         Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", new ArrayList<>());
         taskManager.addEpic(epic);
 
@@ -213,10 +214,10 @@ public class Main {
         System.out.println(taskManager.getEpicById(4));
         taskManager.addSubtask(4, subtask1);
         System.out.println(taskManager.getEpicById(4));
-        Subtask subtask3 = new Subtask(subtask1.getId(), "Первая подзадача", "IN_PROGRESS");
+        Subtask subtask3 = new Subtask(subtask1.getId(), "Первая подзадача", TaskStatus.IN_PROGRESS);
         taskManager.addSubtask(4, subtask3);
         System.out.println(taskManager.getEpicById(4));
-        Subtask subtask4 = new Subtask(subtask1.getId(), "Первая подзадача", "DONE");
+        Subtask subtask4 = new Subtask(subtask1.getId(), "Первая подзадача", TaskStatus.DONE);
         taskManager.addSubtask(4, subtask4);
         System.out.println(taskManager.getEpicById(4));
         taskManager.addSubtask(4, subtask2);
@@ -225,5 +226,61 @@ public class Main {
         System.out.println(taskManager.getEpicById(4));
         System.out.println("--------------------------------------------------------------");
         System.out.println();
+    }
+
+    static void testHistory(TaskManager taskManager) {
+        Task task1 = new Task(taskManager.getCurId(),"Первая", "Моя первая задача", TaskStatus.NEW);
+        Task task2 = new Task(taskManager.getCurId(),"Вторая", "Моя вторая задача", TaskStatus.IN_PROGRESS);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+
+        System.out.println(taskManager.getTaskById(task1.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+        System.out.println(taskManager.getTaskById(task2.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+        System.out.println(taskManager.getTaskById(task1.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
+        subtasks.add(subtask1);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", TaskStatus.NEW);
+        subtasks.add(subtask2);
+        Subtask subtask3 = new Subtask(taskManager.getCurId(), "Третья подзадача", TaskStatus.NEW);
+        subtasks.add(subtask3);
+        Subtask subtask4 = new Subtask(taskManager.getCurId(), "Четвёртая подзадача", TaskStatus.NEW);
+        subtasks.add(subtask4);
+        Subtask subtask5 = new Subtask(taskManager.getCurId(), "Пятая подзадача", TaskStatus.NEW);
+        subtasks.add(subtask5);
+        Subtask subtask6 = new Subtask(taskManager.getCurId(), "Шестая подзадача", TaskStatus.NEW);
+        subtasks.add(subtask6);
+
+        Epic epic1 = new Epic(taskManager.getCurId(), "Первый эпик", "", subtasks);
+        taskManager.addEpic(epic1);
+
+        System.out.println(taskManager.getEpicById(epic1.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        for (Subtask subtask : subtasks) {
+            System.out.println(taskManager.getSubtaskById(subtask.getId()));
+            System.out.println("History: " + taskManager.getHistory());
+            System.out.println("History size: " + taskManager.getHistory().size());
+            System.out.println();
+        }
+
+        for (int ind = subtasks.size() - 1; ind >= 0; ind--) {
+            System.out.println(taskManager.getSubtaskById(subtasks.get(ind).getId()));
+            System.out.println("History: " + taskManager.getHistory());
+            System.out.println("History size: " + taskManager.getHistory().size());
+            System.out.println();
+        }
     }
 }
