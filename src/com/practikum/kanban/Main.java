@@ -5,15 +5,12 @@ import com.practikum.kanban.Managers.TaskManager.TaskManager;
 import com.practikum.kanban.Tasks.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
         Managers managers = new Managers();
-        testTask(managers.getDefault(managers.getDefaultHistory()));
-        testEpicSubtasks(managers.getDefault(managers.getDefaultHistory()));
-        testSubtask(managers.getDefault(managers.getDefaultHistory()));
-        testStatusUpdate(managers.getDefault(managers.getDefaultHistory()));
         testHistory(managers.getDefault(managers.getDefaultHistory()));
     }
 
@@ -234,8 +231,8 @@ public class Main {
     }
 
     static void testHistory(TaskManager taskManager) {
-        Task task1 = new Task(taskManager.getCurId(),"Первая", "Моя первая задача", TaskStatus.NEW);
-        Task task2 = new Task(taskManager.getCurId(),"Вторая", "Моя вторая задача", TaskStatus.IN_PROGRESS);
+        Task task1 = new Task(taskManager.getCurId(), "Первая", "Моя первая задача", TaskStatus.NEW);
+        Task task2 = new Task(taskManager.getCurId(), "Вторая", "Моя вторая задача", TaskStatus.IN_PROGRESS);
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -252,40 +249,45 @@ public class Main {
         System.out.println("History size: " + taskManager.getHistory().size());
         System.out.println();
 
-        ArrayList<Subtask> subtasks = new ArrayList<>();
-        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
-        subtasks.add(subtask1);
-        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", TaskStatus.NEW);
-        subtasks.add(subtask2);
-        Subtask subtask3 = new Subtask(taskManager.getCurId(), "Третья подзадача", TaskStatus.NEW);
-        subtasks.add(subtask3);
-        Subtask subtask4 = new Subtask(taskManager.getCurId(), "Четвёртая подзадача", TaskStatus.NEW);
-        subtasks.add(subtask4);
-        Subtask subtask5 = new Subtask(taskManager.getCurId(), "Пятая подзадача", TaskStatus.NEW);
-        subtasks.add(subtask5);
-        Subtask subtask6 = new Subtask(taskManager.getCurId(), "Шестая подзадача", TaskStatus.NEW);
-        subtasks.add(subtask6);
-
-        Epic epic1 = new Epic(taskManager.getCurId(), "Первый эпик", "", subtasks);
-        taskManager.addEpic(epic1);
-
-        System.out.println(taskManager.getEpicById(epic1.getId()));
+        taskManager.deleteTaskById(task1.getId());
         System.out.println("History: " + taskManager.getHistory());
         System.out.println("History size: " + taskManager.getHistory().size());
         System.out.println();
 
-        for (Subtask subtask : subtasks) {
-            System.out.println(taskManager.getSubtaskById(subtask.getId()));
-            System.out.println("History: " + taskManager.getHistory());
-            System.out.println("History size: " + taskManager.getHistory().size());
-            System.out.println();
-        }
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", TaskStatus.NEW);
+        ArrayList<Subtask> subtasks = new ArrayList<>(List.of(subtask1, subtask2));
+        Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", subtasks);
+        taskManager.addEpic(epic);
 
-        for (int ind = subtasks.size() - 1; ind >= 0; ind--) {
-            System.out.println(taskManager.getSubtaskById(subtasks.get(ind).getId()));
-            System.out.println("History: " + taskManager.getHistory());
-            System.out.println("History size: " + taskManager.getHistory().size());
-            System.out.println();
-        }
+        System.out.println(taskManager.getEpicById(epic.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        System.out.println(taskManager.getSubtaskById(subtask2.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        System.out.println(taskManager.getSubtaskById(subtask1.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        System.out.println(taskManager.getTaskById(task2.getId()));
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        taskManager.deleteSubtaskById(subtask1.getId());
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
+
+        taskManager.deleteEpicById(epic.getId());
+        System.out.println("History: " + taskManager.getHistory());
+        System.out.println("History size: " + taskManager.getHistory().size());
+        System.out.println();
     }
 }
