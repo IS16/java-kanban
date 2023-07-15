@@ -235,59 +235,59 @@ public class Main {
         Task task2 = new Task(taskManager.getCurId(), "Вторая", "Моя вторая задача", TaskStatus.IN_PROGRESS);
         taskManager.addTask(task1);
         taskManager.addTask(task2);
-
-        System.out.println(taskManager.getTaskById(task1.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-        System.out.println(taskManager.getTaskById(task2.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-        System.out.println(taskManager.getTaskById(task1.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        taskManager.deleteTaskById(task1.getId());
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
+//
+//        System.out.println(taskManager.getTaskById(task1.getId()));
+////        System.out.println("History: " + taskManager.getHistory());
+////        System.out.println("History size: " + taskManager.getHistory().size());
+////        System.out.println();
+//        System.out.println(taskManager.getTaskById(task2.getId()));
+////        System.out.println("History: " + taskManager.getHistory());
+////        System.out.println("History size: " + taskManager.getHistory().size());
+////        System.out.println();
+//        System.out.println(taskManager.getTaskById(task1.getId()));
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        taskManager.deleteTaskById(task1.getId());
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
         Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
         Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", TaskStatus.NEW);
         ArrayList<Subtask> subtasks = new ArrayList<>(List.of(subtask1, subtask2));
         Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", subtasks);
         taskManager.addEpic(epic);
-
-        System.out.println(taskManager.getEpicById(epic.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        System.out.println(taskManager.getSubtaskById(subtask2.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        System.out.println(taskManager.getSubtaskById(subtask1.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        System.out.println(taskManager.getTaskById(task2.getId()));
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        taskManager.deleteSubtaskById(subtask1.getId());
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
-
-        taskManager.deleteEpicById(epic.getId());
-        System.out.println("History: " + taskManager.getHistory());
-        System.out.println("History size: " + taskManager.getHistory().size());
-        System.out.println();
+//
+//        System.out.println(taskManager.getEpicById(epic.getId()));
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        System.out.println(taskManager.getSubtaskById(subtask2.getId()));
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        System.out.println(taskManager.getSubtaskById(subtask1.getId()));
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        System.out.println(taskManager.getTaskById(task2.getId()));
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        taskManager.deleteSubtaskById(subtask1.getId());
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
+//
+//        taskManager.deleteEpicById(epic.getId());
+//        System.out.println("History: " + taskManager.getHistory());
+//        System.out.println("History size: " + taskManager.getHistory().size());
+//        System.out.println();
     }
 }

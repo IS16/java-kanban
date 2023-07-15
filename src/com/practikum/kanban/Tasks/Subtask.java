@@ -2,6 +2,7 @@ package com.practikum.kanban.Tasks;
 
 public class Subtask extends Task {
     private int epicId;
+    private final TaskType type = TaskType.SUBTASK;
 
     public Subtask(int id, String title, TaskStatus status) {
         super(id, title, "", status);
@@ -31,6 +32,11 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask(Id = " + super.getId() + ", epicId=" + epicId + ", Title=\"" + super.getTitle() + "\", Description=\"" + super.getDescription() + "\", Status=\"" + super.getStatus() + "\")";
+        return String.format("%d,%s,%s,%s,%s,%d", super.getId(), type, super.getTitle(), super.getStatus(), super.getDescription(), epicId);
+    }
+
+    public static Subtask fromString(String value) {
+        String[] parts = value.split(",");
+        return new Subtask(Integer.parseInt(parts[0]), Integer.parseInt(parts[5]), parts[2], parts[4], TaskStatus.valueOf(parts[3]));
     }
 }

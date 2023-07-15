@@ -2,6 +2,7 @@ package com.practikum.kanban.Tasks;
 
 public class Task {
     private final int id;
+    private final TaskType type = TaskType.TASK;
     private String title;
     private String description = "";
     private TaskStatus status = TaskStatus.NEW;
@@ -54,6 +55,18 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task(Id = " + this.id + ", Title=\"" + this.title + "\", Description=\"" + this.description + "\", Status=\"" + this.status + "\")";
+        return String.format("%d,%s,%s,%s,%s", id, type, title, status, description);
+    }
+
+    public static Task fromString(String value) {
+        String[] parts = value.split(",");
+        Task newTask = new Task(Integer.parseInt(parts[0]), parts[2]);
+        newTask.setStatus(TaskStatus.valueOf(parts[3]));
+
+        if (parts.length > 4) {
+            newTask.setDescription(parts[4]);
+        }
+
+        return newTask;
     }
 }
