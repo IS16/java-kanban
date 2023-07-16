@@ -60,6 +60,10 @@ public class Task {
 
     public static Task fromString(String value) {
         String[] parts = value.split(",");
+        if (parts.length < 4) {
+            return null;
+        }
+
         Task newTask = new Task(Integer.parseInt(parts[0]), parts[2]);
         newTask.setStatus(TaskStatus.valueOf(parts[3]));
 

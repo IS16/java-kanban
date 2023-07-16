@@ -7,15 +7,82 @@ import com.practikum.kanban.Tasks.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    private final HistoryManager historyManager;
     private final String filename;
     public FileBackedTasksManager(HistoryManager historyManager, String filename) {
         super(historyManager);
-        this.historyManager = historyManager;
         this.filename = filename;
+    }
+
+    public static FileBackedTasksManager loadFromFile(String filename) {
+        ArrayList<String> data = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            while (br.ready()) {
+                data.add(br.readLine());
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException("Возникла ошибка при открытии файла!");
+        }
+
+        Managers managers = new Managers();
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(managers.getDefaultHistory(), filename);
+        if (data.size() == 0) {
+            return fileBackedTasksManager;
+        }
+
+        boolean isHistory = false;
+        HashMap<Integer, Task> entities = new HashMap<>();
+
+        for (String line : data.subList(1, data.size())) {
+            if (line.isBlank()) {
+                isHistory = true;
+                continue;
+            }
+
+            if (!isHistory) {
+                String[] parts = line.split(",");
+
+                if (TaskType.TASK == TaskType.valueOf(parts[1])) {
+                    Task newEnitity = Task.fromString(line);
+                    if (newEnitity == null) {
+                        continue;
+                    }
+
+                    entities.put(newEnitity.getId(), newEnitity);
+                    fileBackedTasksManager.addTask(newEnitity);
+                } else if (TaskType.EPIC == TaskType.valueOf(parts[1])) {
+                    Epic newEnitity = Epic.fromString(line);
+                    if (newEnitity == null) {
+                        continue;
+                    }
+
+                    entities.put(newEnitity.getId(), newEnitity);
+                    fileBackedTasksManager.addEpic(newEnitity);
+                } else if (TaskType.SUBTASK == TaskType.valueOf(parts[1])) {
+                    Subtask newEnitity = Subtask.fromString(line);
+                    if (newEnitity == null) {
+                        continue;
+                    }
+
+                    entities.put(newEnitity.getId(), newEnitity);
+                    fileBackedTasksManager.addSubtask(newEnitity.getEpicId(), newEnitity);
+                }
+            } else {
+                ArrayList<Integer> ids = FileBackedTasksManager.historyFromString(line);
+
+                for (Integer id : ids) {
+                    if (entities.containsKey(id)) {
+                        fileBackedTasksManager.historyManager.add(entities.get(id));
+                    }
+                }
+            }
+        }
+
+        return fileBackedTasksManager;
     }
 
     @Override
@@ -134,7 +201,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             }
 
             bw.write("\n");
-            bw.write(FileBackedTasksManager.historyToString(historyManager));
+            bw.write(FileBackedTasksManager.historyToString(super.historyManager));
         } catch (IOException e) {
             throw new ManagerSaveException("Возникла ошибка при сохранении!");
         }
@@ -158,55 +225,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
 
         return out;
-    }
-
-    public static FileBackedTasksManager loadFromFile(String filename) {
-        ArrayList<String> data = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            while (br.ready()) {
-                data.add(br.readLine());
-            }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Возникла ошибка при открытии файла!");
-        }
-
-        Managers managers = new Managers();
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(managers.getDefaultHistory(), filename);
-        if (data.size() == 0) {
-            return fileBackedTasksManager;
-        }
-
-        boolean isHistory = false;
-
-        for (String line : data.subList(1, data.size())) {
-            if (line.isBlank()) {
-                isHistory = true;
-                continue;
-            }
-
-            if (!isHistory) {
-                String[] parts = line.split(",");
-                if (TaskType.TASK == TaskType.valueOf(parts[1])) {
-                    fileBackedTasksManager.addTask(Task.fromString(line));
-                } else if (TaskType.EPIC == TaskType.valueOf(parts[1])) {
-                    fileBackedTasksManager.addEpic(Epic.fromString(line));
-                } else if (TaskType.SUBTASK == TaskType.valueOf(parts[1])) {
-                    Subtask subtask = Subtask.fromString(line);
-                    fileBackedTasksManager.addSubtask(subtask.getEpicId(), subtask);
-                }
-            } else {
-                ArrayList<Integer> ids = FileBackedTasksManager.historyFromString(line);
-
-                for (Integer id : ids) {
-                    fileBackedTasksManager.getTaskById(id);
-                    fileBackedTasksManager.getEpicById(id);
-                    fileBackedTasksManager.getSubtaskById(id);
-                }
-            }
-        }
-
-        return fileBackedTasksManager;
     }
 
     public static void main(String[] args) {

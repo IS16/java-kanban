@@ -93,6 +93,10 @@ public class Epic extends Task {
 
     public static Epic fromString(String value) {
         String[] parts = value.split(",");
+        if (parts.length < 3) {
+            return null;
+        }
+
         Epic newEpic = new Epic(Integer.parseInt(parts[0]), parts[2], new ArrayList<>());
         if (parts.length > 4) {
            newEpic.setDescription(parts[4]);

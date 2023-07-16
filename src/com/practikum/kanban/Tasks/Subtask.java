@@ -37,6 +37,10 @@ public class Subtask extends Task {
 
     public static Subtask fromString(String value) {
         String[] parts = value.split(",");
+        if (parts.length < 6) {
+            return null;
+        }
+
         return new Subtask(Integer.parseInt(parts[0]), Integer.parseInt(parts[5]), parts[2], parts[4], TaskStatus.valueOf(parts[3]));
     }
 }
