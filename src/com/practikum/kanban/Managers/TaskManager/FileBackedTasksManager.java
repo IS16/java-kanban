@@ -36,6 +36,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         boolean isHistory = false;
         HashMap<Integer, Task> entities = new HashMap<>();
+        int maxId = 0;
 
         for (String line : data.subList(1, data.size())) {
             if (line.isBlank()) {
@@ -48,26 +49,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
                 if (TaskType.TASK == TaskType.valueOf(parts[1])) {
                     Task newEnitity = Task.fromString(line);
-                    if (newEnitity == null) {
-                        continue;
-                    }
-
+                    maxId = Math.max(newEnitity.getId(), maxId);
                     entities.put(newEnitity.getId(), newEnitity);
                     fileBackedTasksManager.addTask(newEnitity);
                 } else if (TaskType.EPIC == TaskType.valueOf(parts[1])) {
                     Epic newEnitity = Epic.fromString(line);
-                    if (newEnitity == null) {
-                        continue;
-                    }
-
+                    maxId = Math.max(newEnitity.getId(), maxId);
                     entities.put(newEnitity.getId(), newEnitity);
                     fileBackedTasksManager.addEpic(newEnitity);
                 } else if (TaskType.SUBTASK == TaskType.valueOf(parts[1])) {
                     Subtask newEnitity = Subtask.fromString(line);
-                    if (newEnitity == null) {
-                        continue;
-                    }
-
+                    maxId = Math.max(newEnitity.getId(), maxId);
                     entities.put(newEnitity.getId(), newEnitity);
                     fileBackedTasksManager.addSubtask(newEnitity.getEpicId(), newEnitity);
                 }
@@ -75,13 +67,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 ArrayList<Integer> ids = FileBackedTasksManager.historyFromString(line);
 
                 for (Integer id : ids) {
-                    if (entities.containsKey(id)) {
-                        fileBackedTasksManager.historyManager.add(entities.get(id));
-                    }
+                    fileBackedTasksManager.historyManager.add(entities.get(id));
                 }
             }
         }
 
+        fileBackedTasksManager.curId = maxId;
         return fileBackedTasksManager;
     }
 
@@ -184,7 +175,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    public void save() {
+    private void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             bw.write("id,type,name,status,description,epic\n");
 
@@ -207,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    public static String historyToString(HistoryManager historyManager) {
+    private static String historyToString(HistoryManager historyManager) {
         ArrayList<String> out = new ArrayList<>();
 
         for (Task task : historyManager.getHistory()) {
@@ -216,7 +207,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return String.join(",", out);
     }
 
-    public static ArrayList<Integer> historyFromString(String value) {
+    private static ArrayList<Integer> historyFromString(String value) {
         ArrayList<Integer> out = new ArrayList<>();
 
         String[] parts = value.split(",");
