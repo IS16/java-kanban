@@ -36,10 +36,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         boolean isHistory = false;
         HashMap<Integer, Task> entities = new HashMap<>();
+        ArrayList<Subtask> subtasks = new ArrayList<>();
         int maxId = 0;
 
         for (String line : data.subList(1, data.size())) {
             if (line.isBlank()) {
+                for (Subtask subtask : subtasks) {
+                    fileBackedTasksManager.addSubtask(subtask.getEpicId(), subtask);
+                }
+
                 isHistory = true;
                 continue;
             }
@@ -61,7 +66,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     Subtask newEnitity = Subtask.fromString(line);
                     maxId = Math.max(newEnitity.getId(), maxId);
                     entities.put(newEnitity.getId(), newEnitity);
-                    fileBackedTasksManager.addSubtask(newEnitity.getEpicId(), newEnitity);
+                    subtasks.add(newEnitity);
                 }
             } else {
                 ArrayList<Integer> ids = FileBackedTasksManager.historyFromString(line);
