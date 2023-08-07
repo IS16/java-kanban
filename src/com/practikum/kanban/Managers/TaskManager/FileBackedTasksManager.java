@@ -6,6 +6,7 @@ import com.practikum.kanban.Managers.Managers;
 import com.practikum.kanban.Tasks.*;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +183,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     private void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            bw.write("id,type,name,status,description,epic\n");
+            bw.write("id,type,name,status,description,startTime,duration,epic\n");
 
             for (Task task : super.getAllTasks()) {
                 bw.write(task.toString() + "\n");
@@ -227,30 +228,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Managers managers = new Managers();
         FileBackedTasksManager taskManager = new FileBackedTasksManager(managers.getDefaultHistory(), "data.save");
 
-        Task task1 = new Task(taskManager.getCurId(), "Первая", "Моя первая задача", TaskStatus.NEW);
-        Task task2 = new Task(taskManager.getCurId(), "Вторая", "Моя вторая задача", TaskStatus.IN_PROGRESS);
+        Epic epic1 = new Epic(taskManager.getCurId(), "Первый эпик", new ArrayList<>());
+        taskManager.addEpic(epic1);
+
+        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", "Моя самая первая подзадача", TaskStatus.NEW, LocalDateTime.of(2023, 9, 1, 11, 0, 0), 120);
+        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", TaskStatus.NEW, LocalDateTime.of(2023, 9, 2, 15, 0, 0), 40);
+        taskManager.addSubtask(epic1.getId(), subtask1);
+        taskManager.addSubtask(epic1.getId(), subtask2);
+
+        Task task1 = new Task(taskManager.getCurId(), "Первая", "Моя первая задача", TaskStatus.NEW, LocalDateTime.of(2023, 8, 7,12, 0, 0), 30);
         taskManager.addTask(task1);
+        Task task2 = new Task(taskManager.getCurId(), "Вторая", "", TaskStatus.IN_PROGRESS);
         taskManager.addTask(task2);
-        Task task3 = new Task(1, "Первая задача (Upd)", "Обновление первой задачи", TaskStatus.IN_PROGRESS);
-        taskManager.updateTask(task3);
 
-        Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
-        Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", "Тестовая подзадача", TaskStatus.NEW);
-        ArrayList<Subtask> subtasks = new ArrayList<>(List.of(subtask1, subtask2));
-        Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", subtasks);
-        taskManager.addEpic(epic);
-
-        taskManager.getTaskById(task1.getId());
-        taskManager.getTaskById(task2.getId());
-        taskManager.getTaskById(task1.getId());
-
-        taskManager.deleteSubtaskById(subtask2.getId());
-
-
-        FileBackedTasksManager manager = FileBackedTasksManager.loadFromFile("data.save");
-        System.out.println("Tasks: " + manager.getAllTasks());
-        System.out.println("Epics: " + manager.getAllEpics());
-        System.out.println("Subtasks: " + manager.getAllSubtasks());
-        System.out.println("History: " + manager.getHistory());
+        System.out.println(taskManager.getPrioritizedTasks());
+        taskManager.deleteSubtaskById(subtask1.getId());
+        taskManager.getPrioritizedTasks();
     }
 }

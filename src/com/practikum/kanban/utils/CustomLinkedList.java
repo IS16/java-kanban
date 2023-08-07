@@ -34,7 +34,10 @@ public class CustomLinkedList<T> {
     public void removeNode(Node<T> node) {
         if (node.prev == null) {
             head = node.next;
-            node.next.prev = null;
+
+            if (node.next != null) {
+                node.next.prev = null;
+            }
         } else if (node.next == null) {
             tail = node.prev;
             node.prev.next = null;

@@ -1,15 +1,19 @@
 package com.practikum.kanban.Tasks;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final TaskType type = TaskType.EPIC;
+    private LocalDateTime endTime;
 
     public Epic(int id, String title) {
         super(id, title);
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     public Epic(int id, String title, ArrayList<Subtask> subtasks) {
@@ -21,6 +25,8 @@ public class Epic extends Task {
         }
 
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     public Epic(int id, String title, String description, ArrayList<Subtask> subtasks) {
@@ -32,6 +38,8 @@ public class Epic extends Task {
         }
 
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     public ArrayList<Subtask> getSubtasks() {
@@ -41,6 +49,8 @@ public class Epic extends Task {
     public void addSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     public boolean hasSubtask(int subtaskId) {
@@ -50,11 +60,15 @@ public class Epic extends Task {
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     public void deleteSubtaskById(int subtaskId) {
         subtasks.remove(subtaskId);
         updateStatus();
+        updateStartEndTime();
+        updateDuration();
     }
 
     private void updateStatus() {
@@ -81,6 +95,43 @@ public class Epic extends Task {
         } else {
             super.setStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    private void updateStartEndTime() {
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+
+        for (Integer id: subtasks.keySet()) {
+            if (startTime == null && subtasks.get(id).getStartTime() != null) {
+                startTime = subtasks.get(id).getStartTime();
+                endTime = subtasks.get(id).getEndTime();
+            } else if (subtasks.get(id).getStartTime() != null) {
+                if (startTime.isAfter(subtasks.get(id).getStartTime())){
+                    startTime = subtasks.get(id).getEndTime();
+                }
+
+                if (endTime.isBefore(subtasks.get(id).getEndTime())) {
+                    endTime = subtasks.get(id).getEndTime();
+                }
+            }
+        }
+
+        super.setStartTime(startTime);
+        this.endTime = endTime;
+    }
+
+    private void updateDuration() {
+        int sum = 0;
+        for (Integer id: subtasks.keySet()) {
+            sum += subtasks.get(id).getDuration();
+        }
+
+        super.setDuration(sum);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return this.endTime;
     }
 
     @Override
