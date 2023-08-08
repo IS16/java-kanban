@@ -96,7 +96,7 @@ public class Task {
         this.description = description;
     }
 
-    protected void setStatus(TaskStatus status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

@@ -41,8 +41,17 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        for (Task task: prioritiezedTasks.stream().filter(item -> (item.getStartTime() != null) && (item.getClass() != Epic.class)).collect(Collectors.toList())) {
-            if (task.getStartTime().isBefore(inputTask.getStartTime()) && task.getEndTime().isAfter(inputTask.getStartTime())) {
+        List<Task> onlyTasksAndSubtasks = prioritiezedTasks.stream()
+                .filter(item -> (item.getStartTime() != null) && (item.getClass() != Epic.class))
+                .collect(Collectors.toList());
+
+        for (Task task: onlyTasksAndSubtasks) {
+            boolean isStartTimeBetweenExistStartAndEnd = task.getStartTime().isBefore(inputTask.getStartTime()) && task.getEndTime().isAfter(inputTask.getStartTime());
+            boolean isEndTimeBetweenExistStartAndEnd = task.getStartTime().isBefore(inputTask.getEndTime()) && task.getEndTime().isAfter(inputTask.getEndTime());
+            boolean isTaskStartBeforeExistStartAndEndAndEndAfter = task.getStartTime().isAfter(inputTask.getStartTime()) && task.getEndTime().isBefore(inputTask.getEndTime());
+            boolean isTaskBetweenExistStartAndEnd = task.getStartTime().isBefore(inputTask.getStartTime()) && task.getEndTime().isAfter(inputTask.getEndTime());
+
+            if (isStartTimeBetweenExistStartAndEnd || isEndTimeBetweenExistStartAndEnd || isTaskStartBeforeExistStartAndEndAndEndAfter || isTaskBetweenExistStartAndEnd) {
                 throw new TaskValidateException(String.format("Задача пересекается с другой задачей (ID: %d)", task.getId()));
             }
         }
@@ -55,9 +64,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
+        validateTaskTime(task);
         tasks.put(task.getId(), task);
         prioritiezedTasks.add(task);
-        validateTaskTime(task);
     }
 
     @Override
@@ -77,10 +86,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        validateTaskTime(task);
         prioritiezedTasks.remove(tasks.get(task.getId()));
         tasks.put(task.getId(), task);
         prioritiezedTasks.add(task);
-        validateTaskTime(task);
     }
 
     @Override
@@ -105,8 +114,8 @@ public class InMemoryTaskManager implements TaskManager {
         epics.put(epic.getId(), epic);
 
         for (Subtask subtask : epic.getSubtasks()) {
-            prioritiezedTasks.add(subtask);
             validateTaskTime(subtask);
+            prioritiezedTasks.add(subtask);
             subtasks.put(subtask.getId(), subtask);
         }
     }
@@ -133,17 +142,10 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         Epic oldEpic = epics.get(epic.getId());
-        if (oldEpic.getSubtasks().size() != epic.getSubtasks().size()) {
-            return;
-        }
+        oldEpic.setTitle(epic.getTitle());
+        oldEpic.setDescription(epic.getDescription());
 
-        for (Subtask subtask : oldEpic.getSubtasks()) {
-            if (!epic.hasSubtask(subtask.getId())) {
-                return;
-            }
-        }
-
-        epics.put(epic.getId(), epic);
+        epics.put(epic.getId(), oldEpic);
     }
 
     @Override
@@ -178,11 +180,11 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
+        validateTaskTime(subtask);
         subtask.setEpicId(epicId);
         epics.get(epicId).addSubtask(subtask);
         subtasks.put(subtask.getId(), subtask);
         prioritiezedTasks.add(subtask);
-        validateTaskTime(subtask);
     }
 
     @Override
@@ -219,10 +221,10 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
+        validateTaskTime(subtask);
         prioritiezedTasks.remove(subtasks.get(subtask.getId()));
         subtasks.put(subtask.getId(), subtask);
         prioritiezedTasks.add(subtask);
-        validateTaskTime(subtask);
         epics.get(subtask.getEpicId()).updateSubtask(subtask);
     }
 

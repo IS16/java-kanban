@@ -1,6 +1,7 @@
-package com.practikum.kanban.Managers.TaskManager;
+package tests;
 
 import com.practikum.kanban.Exceptions.TaskValidateException;
+import com.practikum.kanban.Managers.TaskManager.TaskManager;
 import com.practikum.kanban.Tasks.Epic;
 import com.practikum.kanban.Tasks.Subtask;
 import com.practikum.kanban.Tasks.Task;

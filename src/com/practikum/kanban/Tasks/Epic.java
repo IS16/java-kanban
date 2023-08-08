@@ -11,9 +11,7 @@ public class Epic extends Task {
 
     public Epic(int id, String title) {
         super(id, title);
-        updateStatus();
-        updateStartEndTime();
-        updateDuration();
+        calculateParams();
     }
 
     public Epic(int id, String title, ArrayList<Subtask> subtasks) {
@@ -24,9 +22,7 @@ public class Epic extends Task {
             this.subtasks.put(item.getId(), item);
         }
 
-        updateStatus();
-        updateStartEndTime();
-        updateDuration();
+        calculateParams();
     }
 
     public Epic(int id, String title, String description, ArrayList<Subtask> subtasks) {
@@ -37,9 +33,7 @@ public class Epic extends Task {
             this.subtasks.put(item.getId(), item);
         }
 
-        updateStatus();
-        updateStartEndTime();
-        updateDuration();
+        calculateParams();
     }
 
     public ArrayList<Subtask> getSubtasks() {
@@ -48,27 +42,28 @@ public class Epic extends Task {
 
     public void addSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
-        updateStatus();
-        updateStartEndTime();
-        updateDuration();
+        calculateParams();
+
     }
 
     public boolean hasSubtask(int subtaskId) {
         return subtasks.containsKey(subtaskId);
     }
 
-    public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
+    public void calculateParams() {
         updateStatus();
         updateStartEndTime();
         updateDuration();
     }
 
+    public void updateSubtask(Subtask subtask) {
+        subtasks.put(subtask.getId(), subtask);
+        calculateParams();
+    }
+
     public void deleteSubtaskById(int subtaskId) {
         subtasks.remove(subtaskId);
-        updateStatus();
-        updateStartEndTime();
-        updateDuration();
+        calculateParams();
     }
 
     private void updateStatus() {
@@ -135,7 +130,16 @@ public class Epic extends Task {
     }
 
     @Override
-    protected void setStatus(TaskStatus status) { }
+    public void setTitle(String title) {
+        super.setTitle(title);
+    }
+
+    public void setDescription(String description) {
+        super.setDescription(description);
+    }
+
+    @Override
+    public void setStatus(TaskStatus status) { }
 
     @Override
     public String toString() {

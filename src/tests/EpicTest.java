@@ -1,7 +1,11 @@
-package com.practikum.kanban.Tasks;
+package tests;
 
 import com.practikum.kanban.Managers.Managers;
 import com.practikum.kanban.Managers.TaskManager.InMemoryTaskManager;
+import com.practikum.kanban.Tasks.Epic;
+import com.practikum.kanban.Tasks.Subtask;
+import com.practikum.kanban.Tasks.TaskStatus;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ class EpicTest {
         Epic epic = new Epic(taskManager.getCurId(), "Тестовый эпик 1", new ArrayList<>());
         taskManager.addEpic(epic);
 
-        assertEquals(epic.getStatus(), TaskStatus.NEW, "Неверный статус при создании пустого эпика");
+        Assertions.assertEquals(epic.getStatus(), TaskStatus.NEW, "Неверный статус при создании пустого эпика");
 
         Subtask subtask1 = new Subtask(taskManager.getCurId(), "Первая подзадача", TaskStatus.NEW);
         Subtask subtask2 = new Subtask(taskManager.getCurId(), "Вторая подзадача", TaskStatus.NEW);
