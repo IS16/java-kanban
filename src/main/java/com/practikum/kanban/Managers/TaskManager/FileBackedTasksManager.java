@@ -29,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         Managers managers = new Managers();
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(managers.getDefaultHistory(), filename);
-        if (data.size() == 0) {
+        if (data.isEmpty()) {
             return fileBackedTasksManager;
         }
 
@@ -179,7 +179,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    private void save() {
+    protected void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             bw.write("id,type,name,status,description,startTime,duration,epic\n");
 

@@ -1,11 +1,17 @@
 package main.java.com.practikum.kanban.Tasks;
 
+import com.google.gson.JsonElement;
+import main.java.com.practikum.kanban.Exceptions.JsonParseException;
+import main.java.com.practikum.kanban.Exceptions.TaskValidateException;
+import main.java.com.practikum.kanban.API.utils.Parser;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class Task {
     private int id = -1;
-    private final TaskType type = TaskType.TASK;
+    private TaskType type = TaskType.TASK;
     private String title;
     private String description = "";
     private LocalDateTime startTime;
@@ -59,6 +65,10 @@ public class Task {
         return this.id;
     }
 
+    public TaskType getType() {
+        return this.type;
+    }
+
     public String getTitle() {
         return this.title;
     }
@@ -89,6 +99,10 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
     }
 
     protected void setTitle(String title) {
@@ -142,5 +156,74 @@ public class Task {
         }
 
         return newTask;
+    }
+
+    public String toJson() {
+        StringBuilder out = new StringBuilder();
+        out.append(String.format("{\"id\":%d,\"type\":\"%s\",\"title\":\"%s\",\"description\":\"%s\",\"status\":\"%s\"", id, type, title, description, status));
+
+        if (startTime == null) {
+            out.append(",\"startTime\":\"null\"");
+        } else {
+            out.append(String.format(",\"startTime\":\"%s\"", startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss"))));
+        }
+
+        out.append(String.format(",\"duration\":%d}", duration));
+
+        return out.toString();
+    }
+
+    public static Task fromJson(String json) throws JsonParseException {
+        Map<String, JsonElement> jsonMap = Parser.parseJson(json);
+
+        if (!jsonMap.containsKey("title")) {
+            throw new TaskValidateException("Не передан параметр \"title\"");
+        }
+
+        Task newTask = new Task(jsonMap.get("title").getAsString());
+
+        if (jsonMap.containsKey("id")) {
+            try {
+                newTask.setId(jsonMap.get("id").getAsInt());
+            } catch (Exception e) {
+                throw  new TaskValidateException("Невалидный параметр \"id\"");
+            }
+        }
+
+        if (jsonMap.containsKey("description")) {
+            newTask.setDescription(jsonMap.get("description").getAsString());
+        }
+
+        if (jsonMap.containsKey("status")) {
+            try {
+                newTask.setStatus(TaskStatus.valueOf(jsonMap.get("status").getAsString()));
+            } catch (Exception e) {
+                throw  new TaskValidateException("Невалидный параметр \"status\"");
+            }
+        }
+
+        if (jsonMap.containsKey("startTime") && !jsonMap.get("startTime").getAsString().equals("null")) {
+            try {
+                LocalDateTime startTime = LocalDateTime.parse(jsonMap.get("startTime").getAsString(), DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss"));
+                newTask.setStartTime(startTime);
+
+                if (jsonMap.containsKey("duration") && !jsonMap.get("duration").getAsString().equals("0")) {
+                    try {
+                        newTask.setDuration(jsonMap.get("duration").getAsInt());
+                    } catch (Exception e) {
+                        throw new JsonParseException("Длительность должна быть целым числом", 0);
+                    }
+                }
+            } catch (Exception e) {
+                throw new JsonParseException("Невалидная дата начала", 0);
+            }
+        }
+
+        return newTask;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id;
     }
 }

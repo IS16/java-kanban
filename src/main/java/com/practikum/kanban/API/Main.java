@@ -1,22 +1,25 @@
-package main.java.com.practikum.kanban;
+package main.java.com.practikum.kanban.API;
 
-import main.java.com.practikum.kanban.Exceptions.JsonParseException;
-import main.java.com.practikum.kanban.KVServer.KVServer;
+import com.sun.net.httpserver.HttpServer;
 import main.java.com.practikum.kanban.Managers.Managers;
-import main.java.com.practikum.kanban.Managers.TaskManager.HttpTaskManager;
+import main.java.com.practikum.kanban.Managers.TaskManager.FileBackedTasksManager;
+import main.java.com.practikum.kanban.Managers.TaskManager.TaskManager;
 import main.java.com.practikum.kanban.Tasks.Epic;
 import main.java.com.practikum.kanban.Tasks.Subtask;
 import main.java.com.practikum.kanban.Tasks.Task;
 import main.java.com.practikum.kanban.Tasks.TaskStatus;
+import main.java.com.practikum.kanban.API.handlers.*;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException, JsonParseException {
-        new KVServer().start();
+    private static final int PORT = 8080;
 
-        HttpTaskManager taskManager = new HttpTaskManager("http://localhost:8078/", new Managers().getDefaultHistory());
+    public static void main(String[] args) throws IOException {
+        Managers managers = new Managers();
+        TaskManager taskManager = new FileBackedTasksManager(managers.getDefaultHistory(), "data.save");
 
         Epic epic1 = new Epic("Первый эпик");
         taskManager.addEpic(epic1);
@@ -34,12 +37,16 @@ public class Main {
         Task task2 = new Task("Вторая", "", TaskStatus.IN_PROGRESS);
         taskManager.addTask(task2);
 
-        taskManager.getTaskById(task1.getId());
-        taskManager.getSubtaskById(subtask1.getId());
-        taskManager.getSubtaskById(subtask2.getId());
-        taskManager.getTaskById(task1.getId());
+        HttpServer httpServer = HttpServer.create();
 
-        HttpTaskManager taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/");
-        System.out.println(taskManager1.getPrioritizedTasks());
+        httpServer.bind(new InetSocketAddress(PORT), 0);
+        httpServer.createContext("/tasks", new TasksList(taskManager));
+        httpServer.createContext("/tasks/task", new Tasks(taskManager));
+        httpServer.createContext("/tasks/subtask", new Subtasks(taskManager));
+        httpServer.createContext("/tasks/epic", new Epics(taskManager));
+        httpServer.createContext("/tasks/history", new History(taskManager));
+        httpServer.start();
+
+        System.out.printf("Server starts at port %d\n", PORT);
     }
 }

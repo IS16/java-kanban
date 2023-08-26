@@ -20,6 +20,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final Comparator<Task> tasksComparator = new Comparator<Task>() {
         @Override
         public int compare(Task o1, Task o2) {
+            if (o1.getId() == o2.getId()) {
+                return 0;
+            }
+
             if (o1.getStartTime() == null) {
                 return 1;
             } else if (o2.getStartTime() == null) {
@@ -30,7 +34,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     };
 
-    protected final TreeSet<Task> prioritiezedTasks = new TreeSet<>(tasksComparator);
+    protected TreeSet<Task> prioritiezedTasks = new TreeSet<>(tasksComparator);
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
