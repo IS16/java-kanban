@@ -140,19 +140,19 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         Task taskToAdd = new Task("Первая задача", "", TaskStatus.NEW);
         taskManager.addTask(taskToAdd);
 
-        HttpTaskManager taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/");
+        HttpTaskManager taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/", managers.getDefaultHistory());
         final Task task = taskManager1.getTaskById(taskToAdd.getId());
         assertNotNull(task, "Задача не импортирована");
 
         taskManager.deleteAllTasks();
-        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/");
+        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/", managers.getDefaultHistory());
         assertEquals(0, taskManager1.getAllTasks().size(), "Появились лишние задачи");
         assertEquals(0, taskManager1.getHistory().size(), "История не пустая");
 
         Epic epic1 = new Epic("Первый эпик");
         taskManager.addEpic(epic1);
 
-        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/");
+        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/", managers.getDefaultHistory());
         assertEquals(1, taskManager1.getAllEpics().size(), "Эпик не импортирован");
         assertEquals(0, taskManager1.getAllSubtasks().size(), "Появились лишние подзадачи");
 
@@ -160,7 +160,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         taskManager.addSubtask(epic1.getId(), subtask1);
         taskManager.getEpicById(epic1.getId());
 
-        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/");
+        taskManager1 = HttpTaskManager.loadFromDB("http://localhost:8078/", managers.getDefaultHistory());
         assertEquals(1, taskManager1.getAllSubtasks().size(), "Подзадачи не добавились");
         assertEquals(1, taskManager1.getHistory().size(), "История не импортировалась");
     }

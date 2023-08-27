@@ -24,17 +24,21 @@ public class HttpTaskManager extends FileBackedTasksManager implements TaskManag
         this.client = new KVTaskClient(url);
     }
 
-    public static HttpTaskManager loadFromDB(String url) throws IOException, InterruptedException, JsonParseException {
-        Managers managers = new Managers();
+    public static HttpTaskManager loadFromDB(String url, HistoryManager historyManager) throws IOException, InterruptedException, JsonParseException {
         KVTaskClient client = new KVTaskClient(url);
-        HttpTaskManager manager = new HttpTaskManager(url, managers.getDefaultHistory());
+        HttpTaskManager manager = new HttpTaskManager(url, historyManager);
 
         HashMap<Integer, Task> entities = new HashMap<>();
         Integer maxId = 0;
 
-        JsonArray epicsArray = new JsonParser().parse(client.get("epics")).getAsJsonArray();
-        JsonArray subtasksArray = new JsonParser().parse(client.get("subtasks")).getAsJsonArray();
-        JsonArray tasksArray = new JsonParser().parse(client.get("tasks")).getAsJsonArray();
+        String epicsJSON = client.get("epics");
+        JsonArray epicsArray = new JsonParser().parse(epicsJSON).getAsJsonArray();
+
+        String subtasksJSON = client.get("subtasks");
+        JsonArray subtasksArray = new JsonParser().parse(subtasksJSON).getAsJsonArray();
+
+        String tasksJSON = client.get("tasks");
+        JsonArray tasksArray = new JsonParser().parse(tasksJSON).getAsJsonArray();
         ArrayList<Integer> ids;
 
         try {
@@ -46,21 +50,30 @@ public class HttpTaskManager extends FileBackedTasksManager implements TaskManag
         for (JsonElement elem : epicsArray) {
             Epic epic = Epic.fromJson(elem.toString());
             entities.put(epic.getId(), epic);
-            manager.addEpic(epic);
+
+            manager.epics.put(epic.getId(), epic);
+
             maxId = Math.max(epic.getId(), maxId);
         }
 
         for (JsonElement elem : subtasksArray) {
             Subtask subtask = Subtask.fromJson(elem.toString());
             entities.put(subtask.getId(), subtask);
-            manager.addSubtask(subtask.getEpicId(), subtask);
+
+            manager.epics.get(subtask.getEpicId()).addSubtask(subtask);
+            manager.subtasks.put(subtask.getId(), subtask);
+            manager.prioritiezedTasks.add(subtask);
+
             maxId = Math.max(subtask.getId(), maxId);
         }
 
         for (JsonElement elem : tasksArray) {
             Task task = Task.fromJson(elem.toString());
             entities.put(task.getId(), task);
-            manager.addTask(task);
+
+            manager.tasks.put(task.getId(), task);
+            manager.prioritiezedTasks.add(task);
+
             maxId = Math.max(task.getId(), maxId);
         }
 
@@ -68,6 +81,7 @@ public class HttpTaskManager extends FileBackedTasksManager implements TaskManag
             manager.historyManager.add(entities.get(id));
         }
 
+        manager.curId = maxId;
         return manager;
     }
 
